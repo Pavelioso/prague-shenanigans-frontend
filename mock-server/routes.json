@@ -1,0 +1,4 @@
+{
+    "/api/pois": "/pois",
+    "/api/users": "/users"
+  }

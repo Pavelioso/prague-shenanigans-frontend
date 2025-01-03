@@ -1,0 +1,136 @@
+{
+  "pois": [
+    {
+      "id": "1",
+      "title": "Old Town Square",
+      "description": "Historic square in the heart of Prague",
+      "latitude": 50.087451,
+      "longitude": 14.420671,
+      "type": "Landmark",
+      "icon": "castle",
+      "tags": ["historic", "tourist hotspot", "architecture"],
+      "importance": 1
+    },
+    {
+      "id": "2",
+      "title": "Charles Bridge",
+      "description": "Famous medieval stone bridge",
+      "latitude": 50.086421,
+      "longitude": 14.409523,
+      "type": "Bridge",
+      "icon": "charles_bridge",
+      "tags": ["historic", "scesnic", "river", "tourist hotspot"],
+      "importance": 1
+    },
+    {
+      "id": "3",
+      "title": "Prague Castle",
+      "description": "Largest ancient castle in the world",
+      "latitude": 50.089962,
+      "longitude": 14.398588,
+      "type": "Castle",
+      "icon": "prague_castle",
+      "tags": ["historic", "tourist hotspot", "architecture"],
+      "importance": 1
+    },
+    {
+      "id": "4",
+      "title": "Petrin Tower",
+      "description": "A mini Eiffel Tower with panoramic views",
+      "latitude": 50.08337,
+      "longitude": 14.39559,
+      "type": "Tower",
+      "icon": "eiffel-tower",
+      "tags": ["scenic", "viewpoint", "landmark"],
+      "importance": 2
+    },
+    {
+      "id": "5",
+      "title": "Dancing House",
+      "description": "Famous modern architecture building",
+      "latitude": 50.075539,
+      "longitude": 14.414821,
+      "type": "Building",
+      "icon": "office-building",
+      "tags": ["modern", "architecture", "landmark"],
+      "importance": 3
+    },
+    {
+      "id": "6",
+      "title": "Lennon Wall",
+      "description": "A colorful wall filled with John Lennon-inspired graffiti",
+      "latitude": 50.086452,
+      "longitude": 14.408399,
+      "type": "Landmark",
+      "icon": "wall",
+      "tags": ["street art", "graffiti", "tourist hotspot"],
+      "importance": 4
+    },
+    {
+      "id": "7",
+      "title": "Letná Park",
+      "description": "A large park offering scenic views of Prague",
+      "latitude": 50.096475,
+      "longitude": 14.414034,
+      "type": "Park",
+      "icon": "tree",
+      "tags": ["nature", "relaxing", "scenic"],
+      "importance": 2
+    },
+    {
+      "id": "8",
+      "title": "Kampa Park Restaurant",
+      "description": "High-end riverside dining with views of Charles Bridge",
+      "latitude": 50.084573,
+      "longitude": 14.408784,
+      "type": "Restaurant",
+      "icon": "silverware-fork-knife",
+      "tags": ["food", "fine dining", "scenic"],
+      "importance": 5
+    },
+    {
+      "id": "9",
+      "title": "Café Slavia",
+      "description": "Historic café with river views",
+      "latitude": 50.080931,
+      "longitude": 14.413494,
+      "type": "Café",
+      "icon": "coffee",
+      "tags": ["historic", "local", "coffee"],
+      "importance": 4
+    },
+    {
+      "id": "10",
+      "title": "Vysehrad Fortress",
+      "description": "Historic fort with panoramic city views",
+      "latitude": 50.064651,
+      "longitude": 14.417121,
+      "type": "Fortress",
+      "icon": "castle",
+      "tags": ["historic", "scenic", "architecture"],
+      "importance": 3
+    },
+    {
+      "id": "11",
+      "title": "Narodni Museum",
+      "description": "Czech National Museum with historical artifacts",
+      "latitude": 50.079447,
+      "longitude": 14.431615,
+      "type": "Museum",
+      "icon": "bank",
+      "tags": ["history", "culture", "museum"],
+      "importance": 4
+    },
+    {
+      "id": "12",
+      "title": "Letna Beer Garden",
+      "description": "Famous beer garden in Letná Park with great views",
+      "latitude": 50.097833,
+      "longitude": 14.414742,
+      "type": "Bar",
+      "icon": "beer",
+      "tags": ["drinks", "scenic", "local"],
+      "importance": 5
+    }
+  ]
+}
