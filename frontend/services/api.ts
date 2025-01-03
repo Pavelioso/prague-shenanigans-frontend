@@ -1,38 +1,52 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { POI } from "../types"; // Import the centralized POI type
-
-//OLD
-const BASE_URL = "http://192.168.0.144:3000";
-
-
-type POIResponse = {
-  pois: POI[];
-};
+import { POI } from "../types";
 
 const BASE_RAW_URL = "https://raw.githubusercontent.com/Pavelioso/prague-shenanigans-data/refs/heads/main/";
 const ICONS_DIRECTORY = "icons/";
-const MARKDOWN_DIRECTORY = "content/";
+const CONTENT_DIRECTORY = "content/";
+const GITHUB_POIS_URL = `${BASE_RAW_URL}data/pois.json`;
 
-const GITHUB_POIS_URL = BASE_RAW_URL + "data/pois.json";
+// Helper function to construct Markdown and Icon URLs
+const getContentPath = (poiId: string, fileName: string): string =>
+  `${BASE_RAW_URL}${CONTENT_DIRECTORY}${poiId}/${fileName}`;
 
-
+// Fetch all POIs with resolved Markdown and Icon paths
 
 export const getPOIs = async (): Promise<POI[]> => {
   const response = await fetch(GITHUB_POIS_URL);
-  console.log("Fetching POIs...");
   if (!response.ok) throw new Error("Error fetching POIs from GitHub");
 
   const data: { pois: POI[] } = await response.json();
 
   return data.pois.map((poi) => ({
     ...poi,
-    description_md: `${BASE_RAW_URL}${MARKDOWN_DIRECTORY}${poi.description_md}`, // Full URL for markdown
-    icon: poi.icon && poi.icon.trim() !== "" 
-      ? `${BASE_RAW_URL}${ICONS_DIRECTORY}${poi.icon}` // Full URL for icons if `poi.icon` is valid
-      : `${BASE_RAW_URL}${ICONS_DIRECTORY}default_pin.png`, // Server-hosted default icon
+    description_md: `${BASE_RAW_URL}${CONTENT_DIRECTORY}${poi.id}/${poi.id}.md`, // Resolve Markdown path
+    icon: poi.icon && poi.icon.trim() !== ""
+      ? `${BASE_RAW_URL}${ICONS_DIRECTORY}${poi.icon}` // Resolve icon from the icons directory
+      : `${BASE_RAW_URL}${ICONS_DIRECTORY}default_pin.png`, // Default fallback icon
     type: poi.type || "Unknown",
     tags: poi.tags || [],
   }));
+};
+
+// Fetch Markdown with resolved image paths
+export const fetchMarkdown = async (markdownPath: string): Promise<string> => {
+  const response = await fetch(markdownPath);
+  if (!response.ok) throw new Error("Failed to load markdown content");
+
+  const markdownContent = await response.text();
+
+  // Replace relative image paths with absolute URLs
+  const directoryPath = markdownPath.replace(/\/[^/]+\.md$/, "/");
+  return markdownContent.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, relativePath) => {
+    // Skip replacement for already absolute URLs
+    if (relativePath.startsWith("http://") || relativePath.startsWith("https://")) {
+      return match;
+    }
+
+    // Construct absolute URL for relative paths
+    const absolutePath = `${directoryPath}${relativePath}`;
+    return `![${alt}](${absolutePath})`;
+  });
 };
 
 
@@ -40,56 +54,4 @@ export const getPOIs = async (): Promise<POI[]> => {
 export const getRawImageUrl = (relativePath: string): string => {
   // Add the icons directory prefix if the path is for an icon
   return `${BASE_RAW_URL}${ICONS_DIRECTORY}${relativePath}`;
-};
-
-
-
-// Fetch all POIs - OLD
-/* export const getPOIs = async (): Promise<POI[]> => {
-  const response = await fetch(`${BASE_URL}/pois`);
-  if (!response.ok) throw new Error("Error fetching POIs");
-
-  const pois: POI[] = await response.json();
-
-  // Ensure that each POI has mandatory fields with default values
-  return pois.map((poi) => ({
-    ...poi,
-    type: poi.type || "Unknown",            // Provide a default value if missing
-    icon: poi.icon || "map-marker",         // Provide a default icon if missing
-    tags: poi.tags || [],                   // Provide an empty array if tags are missing
-  }));
-}; */
-
-// Add a new POI
-export const addPOI = async (poi: Omit<POI, "id">): Promise<POI> => {
-  const response = await fetch(`${BASE_URL}/pois`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(poi),
-  });
-  if (!response.ok) throw new Error("Error adding POI");
-  return response.json();
-};
-
-// Update a POI
-export const updatePOI = async (poi: POI): Promise<POI> => {
-  const response = await fetch(`${BASE_URL}/pois/${poi.id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(poi),
-  });
-  if (!response.ok) throw new Error("Error updating POI");
-  return response.json();
-};
-
-// Delete a POI
-export const deletePOI = async (id: number): Promise<void> => {
-  const response = await fetch(`${BASE_URL}/pois/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) throw new Error("Error deleting POI");
 };
