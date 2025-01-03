@@ -6,7 +6,6 @@ import { POI } from "../types";             // Import the mandatory POI type
 import POIDetail from './POIDetail';        // Import POIDetail component
 import POICallout from './POICallout';
 import mapStyle from '../styles/map-style-light-green-brown.json';
-import iconMap from './Icons';
 
 const PragueMap: React.FC = () => {
   const [pointsOfInterest, setPointsOfInterest] = useState<POI[]>([]);
@@ -54,10 +53,10 @@ const PragueMap: React.FC = () => {
     }
   };
 
-  const getImageSource = (iconName: string) => {
+  /* const getImageSource = (iconName: string) => {
     // Return the image from the map if found, otherwise return the default icon
-    return iconMap[iconName] || iconMap['default_pin'];
-  };
+    return pointsOfIn || iconMap['default_pin'];
+  }; */
 
   return (
     <View style={{ flex: 1 }}>
@@ -70,7 +69,7 @@ const PragueMap: React.FC = () => {
         showsUserLocation={true}
         customMapStyle={mapStyle}
         moveOnMarkerPress={false}
-        
+
       >
         {pointsOfInterest.map((poi) => (
           <Marker
@@ -78,14 +77,14 @@ const PragueMap: React.FC = () => {
             key={poi.id}
             coordinate={{ latitude: poi.latitude, longitude: poi.longitude }}
             onPress={() => handleMarkerPress(poi)}
-            //anchor={{ x: 0.5, y: 0.5 }}
+          //anchor={{ x: 0.5, y: 0.5 }}
           >
             <>
               <View
                 style={{
                   width: getIconSize(poi.importance),
                   aspectRatio: 1,
-                  
+
                   justifyContent: "center",
                   alignItems: "center",
                   backgroundColor: "rgba(0, 0, 0, 0.1)", // Highlight touchable area for debugging
@@ -93,12 +92,10 @@ const PragueMap: React.FC = () => {
                 }}
               >
                 <Image
-                  source={getImageSource(poi.icon)}
+                  source={{ uri: poi.icon }} // Load the remote icon
                   style={{
-                    width: "80%", 
-                    height: "80%", 
-                    //borderColor: "blue",
-                    //borderWidth: 1, 
+                    width: "80%",
+                    height: "80%",
                   }}
                   resizeMode="contain"
                 />

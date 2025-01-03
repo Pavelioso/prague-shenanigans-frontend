@@ -27,7 +27,9 @@ export const getPOIs = async (): Promise<POI[]> => {
   return data.pois.map((poi) => ({
     ...poi,
     description_md: `${BASE_RAW_URL}${MARKDOWN_DIRECTORY}${poi.description_md}`, // Full URL for markdown
-    icon: `${BASE_RAW_URL}${ICONS_DIRECTORY}${poi.icon}`, // Full URL for icons
+    icon: poi.icon && poi.icon.trim() !== "" 
+      ? `${BASE_RAW_URL}${ICONS_DIRECTORY}${poi.icon}` // Full URL for icons if `poi.icon` is valid
+      : `${BASE_RAW_URL}${ICONS_DIRECTORY}default_pin.png`, // Server-hosted default icon
     type: poi.type || "Unknown",
     tags: poi.tags || [],
   }));

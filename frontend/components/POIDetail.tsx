@@ -3,7 +3,6 @@ import { View, ScrollView, Image, ActivityIndicator, Dimensions } from "react-na
 import { Modal, Button, Chip, Surface, Card, Title, Paragraph, Text } from "react-native-paper";
 import Markdown from "react-native-markdown-display"; // Library for rendering markdown
 import { POI } from "../types"; // Import the shared POI interface
-import { getRawImageUrl } from "../services/api";
 
 const screenHeight = Dimensions.get("window").height;
 
