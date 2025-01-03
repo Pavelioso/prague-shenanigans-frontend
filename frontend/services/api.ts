@@ -1,39 +1,27 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { POI } from "../types"; // Import the centralized POI type
 
-// Updated POI type to include type, icon, and tags
-export type POI = {
-  id: number; // Change from number to string
-  title: string;
-  description: string;
-  description_md: string;
-  latitude: number;
-  longitude: number;
-  type: string;
-  icon: string;
-  tags: string[];
-  importance: number;
-};
+//OLD
+const BASE_URL = "http://192.168.0.144:3000";
 
 
 type POIResponse = {
   pois: POI[];
 };
 
-
-const BASE_URL = "http://192.168.0.144:3000";
-
-
 const GITHUB_POIS_URL = "https://raw.githubusercontent.com/Pavelioso/prague-shenanigans-data/refs/heads/main/data/pois.json";
+
+const BASE_RAW_URL = "https://raw.githubusercontent.com/Pavelioso/prague-shenanigans-data/refs/heads/main/";
 
 export const getPOIs = async (): Promise<POI[]> => {
   const response = await fetch(GITHUB_POIS_URL);
   if (!response.ok) throw new Error("Error fetching POIs from GitHub");
 
-  const data: POIResponse = await response.json(); // Explicitly type the response
+  const data: { pois: POI[] } = await response.json();
 
-  // Ensure all POIs have mandatory fields
   return data.pois.map((poi) => ({
     ...poi,
+    description_md: `${BASE_RAW_URL}${poi.description_md}`, // Construct full URL
     type: poi.type || "Unknown",
     icon: poi.icon || "map-marker",
     tags: poi.tags || [],

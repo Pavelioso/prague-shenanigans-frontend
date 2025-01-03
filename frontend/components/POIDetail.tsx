@@ -1,8 +1,7 @@
-// components/POIDetail.tsx
-import React from "react";
-import { View, ScrollView, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, ScrollView, Image, ActivityIndicator } from "react-native";
 import { Modal, Text, Button, Chip, Surface, Card, Title, Paragraph } from "react-native-paper";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Markdown from "react-native-markdown-display"; // Library for rendering markdown
 import { POI } from "../types"; // Import the shared POI interface
 
 interface POIDetailProps {
@@ -12,17 +11,39 @@ interface POIDetailProps {
 }
 
 const POIDetail: React.FC<POIDetailProps> = ({ visible, onClose, poi }) => {
+  const [markdownContent, setMarkdownContent] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchMarkdown = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(poi.description_md); // Fetch markdown content
+        if (!response.ok) throw new Error("Failed to load markdown content");
+        const text = await response.text();
+        setMarkdownContent(text);
+      } catch (error) {
+        console.error(error);
+        setMarkdownContent("Failed to load detailed content.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (visible) fetchMarkdown();
+  }, [poi.description_md, visible]);
+
   return (
     <Modal visible={visible} onDismiss={onClose} contentContainerStyle={{ padding: 20 }}>
       <Surface style={{ elevation: 1, borderRadius: 10 }}>
         <Card>
           <Card.Title
-            title={poi.type}
+            title={poi.type + " | " + poi.title}
             subtitle={poi.description}
             left={(props) => (
               <Image
                 {...props}
-                source={{ uri: poi.icon }} // Here, the icon is loaded from the URI/path specified in your db.json
+                source={{ uri: poi.icon }} // Load the icon from the URI/path specified
                 style={{ width: 40, height: 40 }} // Adjust the size accordingly
               />
             )}
@@ -35,10 +56,15 @@ const POIDetail: React.FC<POIDetailProps> = ({ visible, onClose, poi }) => {
                 source={{ uri: "https://via.placeholder.com/300" }}
               />
 
-              <Title style={{ fontSize: 22 }}>{poi.title}</Title>
-              <Paragraph>{poi.description}</Paragraph>
+              
 
-              <Paragraph>{`Detailed information about ${poi.title}`}</Paragraph>
+              {loading ? (
+                <ActivityIndicator size="large" style={{ marginVertical: 20 }} />
+              ) : (
+                <Markdown style={{ body: { fontSize: 16 } }}>
+                  {markdownContent || "No detailed content available."}
+                </Markdown>
+              )}
 
               <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
                 {poi.tags.map((tag, index) => (
