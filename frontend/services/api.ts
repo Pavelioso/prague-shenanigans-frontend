@@ -9,23 +9,35 @@ type POIResponse = {
   pois: POI[];
 };
 
-const GITHUB_POIS_URL = "https://raw.githubusercontent.com/Pavelioso/prague-shenanigans-data/refs/heads/main/data/pois.json";
-
 const BASE_RAW_URL = "https://raw.githubusercontent.com/Pavelioso/prague-shenanigans-data/refs/heads/main/";
+const ICONS_DIRECTORY = "icons/";
+const MARKDOWN_DIRECTORY = "content/";
+
+const GITHUB_POIS_URL = BASE_RAW_URL + "data/pois.json";
+
+
 
 export const getPOIs = async (): Promise<POI[]> => {
   const response = await fetch(GITHUB_POIS_URL);
+  console.log("Fetching POIs...");
   if (!response.ok) throw new Error("Error fetching POIs from GitHub");
 
   const data: { pois: POI[] } = await response.json();
 
   return data.pois.map((poi) => ({
     ...poi,
-    description_md: `${BASE_RAW_URL}${poi.description_md}`, // Construct full URL
+    description_md: `${BASE_RAW_URL}${MARKDOWN_DIRECTORY}${poi.description_md}`, // Full URL for markdown
+    icon: `${BASE_RAW_URL}${ICONS_DIRECTORY}${poi.icon}`, // Full URL for icons
     type: poi.type || "Unknown",
-    icon: poi.icon || "map-marker",
     tags: poi.tags || [],
   }));
+};
+
+
+
+export const getRawImageUrl = (relativePath: string): string => {
+  // Add the icons directory prefix if the path is for an icon
+  return `${BASE_RAW_URL}${ICONS_DIRECTORY}${relativePath}`;
 };
 
 

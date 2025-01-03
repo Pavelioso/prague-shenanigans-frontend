@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, ScrollView, Image, ActivityIndicator } from "react-native";
-import { Modal, Text, Button, Chip, Surface, Card, Title, Paragraph } from "react-native-paper";
+import { View, ScrollView, Image, ActivityIndicator, Dimensions } from "react-native";
+import { Modal, Button, Chip, Surface, Card, Title, Paragraph, Text } from "react-native-paper";
 import Markdown from "react-native-markdown-display"; // Library for rendering markdown
 import { POI } from "../types"; // Import the shared POI interface
+import { getRawImageUrl } from "../services/api";
+
+const screenHeight = Dimensions.get("window").height;
 
 interface POIDetailProps {
   visible: boolean;
@@ -33,6 +36,8 @@ const POIDetail: React.FC<POIDetailProps> = ({ visible, onClose, poi }) => {
     if (visible) fetchMarkdown();
   }, [poi.description_md, visible]);
 
+  console.log(poi.icon);
+
   return (
     <Modal visible={visible} onDismiss={onClose} contentContainerStyle={{ padding: 20 }}>
       <Surface style={{ elevation: 1, borderRadius: 10 }}>
@@ -44,19 +49,14 @@ const POIDetail: React.FC<POIDetailProps> = ({ visible, onClose, poi }) => {
               <Image
                 {...props}
                 source={{ uri: poi.icon }} // Load the icon from the URI/path specified
-                style={{ width: 40, height: 40 }} // Adjust the size accordingly
+                style={{ width: 60, height: 60, marginLeft: -10 }} // Adjust the size accordingly
               />
             )}
           />
 
-          <Card.Content>
-            <ScrollView>
-              <Image
-                style={{ width: "100%", height: 200, borderRadius: 10, marginBottom: 20 }}
-                source={{ uri: "https://via.placeholder.com/300" }}
-              />
-
-              
+          {/* Constrain Card.Content to 80% of the vertical screen space */}
+          <Card.Content style={{ height: screenHeight * 0.7 }}>
+            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
 
               {loading ? (
                 <ActivityIndicator size="large" style={{ marginVertical: 20 }} />
