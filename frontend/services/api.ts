@@ -1,35 +1,46 @@
+
+
+// Fetch all POIs from the Django backend
 import { POI } from "../types";
 
-const BASE_RAW_URL = "https://raw.githubusercontent.com/Pavelioso/prague-shenanigans-data/refs/heads/main/";
-const ICONS_DIRECTORY = "icons/";
-const CONTENT_DIRECTORY = "content/";
-const GITHUB_POIS_URL = `${BASE_RAW_URL}data/pois.json`;
+// CHANGE THIS TO LOCAL ADDRESS OF WHATEVER IS HOSTING DJANGO
+const BASE_API_URL = "http://192.168.0.144:8000/api/";
+const ICONS_DIRECTORY = "media/icons/";
 
-// Helper function to construct Markdown and Icon URLs
-const getContentPath = (poiId: string, fileName: string): string =>
-  `${BASE_RAW_URL}${CONTENT_DIRECTORY}${poiId}/${fileName}`;
-
-// Fetch all POIs with resolved Markdown and Icon paths
-
+// Fetch all POIs from the Django backend
 export const getPOIs = async (): Promise<POI[]> => {
-  const response = await fetch(GITHUB_POIS_URL);
-  if (!response.ok) throw new Error("Error fetching POIs from GitHub");
+  const response = await fetch(`${BASE_API_URL}pois/`);
+  
+  if (!response.ok) {
+    console.error("Error fetching POIs from the backend");
+    throw new Error("Error fetching POIs from the backend");
+  }
 
-  const data: { pois: POI[] } = await response.json();
+  const data = await response.json();
 
-  return data.pois.map((poi) => ({
-    ...poi,
-    description_md: `${BASE_RAW_URL}${CONTENT_DIRECTORY}${poi.id}/${poi.id}.md`, // Resolve Markdown path
-    icon: poi.icon && poi.icon.trim() !== ""
-      ? `${BASE_RAW_URL}${ICONS_DIRECTORY}${poi.icon}` // Resolve icon from the icons directory
-      : `${BASE_RAW_URL}${ICONS_DIRECTORY}default_pin.png`, // Default fallback icon
-    type: poi.type || "Unknown",
-    tags: poi.tags || [],
+  // Log the raw API response for debugging
+  //console.log("Raw API response:", data);
+
+  // Transform the data to match the frontend's expected structure
+  return data.map((poi: any) => ({
+    id: poi.id,                                // Match Django's CharField (primary key)
+    title: poi.title,                         // Match CharField
+    description: poi.description,             // Match TextField
+    markdown_content: poi.markdown_content,     // Match Markdown content
+    latitude: poi.latitude,                   // Match FloatField
+    longitude: poi.longitude,                 // Match FloatField
+    poi_type: poi.poi_type,                       // Map poi_type to type
+    icon: poi.icon                             // Use the full URL for icons
+      ? `${BASE_API_URL}${ICONS_DIRECTORY}${poi.icon}`
+      : `${BASE_API_URL}${ICONS_DIRECTORY}default_pin.png`, // Fallback for missing icons
+    tags: poi.tags || [],                     // Match JSONField
+    importance: poi.importance,               // Match IntegerField
   }));
 };
 
-// Fetch Markdown with resolved image paths
-export const fetchMarkdown = async (markdownPath: string): Promise<string> => {
+
+// Fetch Markdown content for a specific POI
+/* export const fetchMarkdown = async (markdownPath: string): Promise<string> => {
   const response = await fetch(markdownPath);
   if (!response.ok) throw new Error("Failed to load markdown content");
 
@@ -47,11 +58,9 @@ export const fetchMarkdown = async (markdownPath: string): Promise<string> => {
     const absolutePath = `${directoryPath}${relativePath}`;
     return `![${alt}](${absolutePath})`;
   });
-};
+}; */
 
-
-
-export const getRawImageUrl = (relativePath: string): string => {
-  // Add the icons directory prefix if the path is for an icon
-  return `${BASE_RAW_URL}${ICONS_DIRECTORY}${relativePath}`;
-};
+// Get raw image URL for an icon
+/* export const getRawImageUrl = (relativePath: string): string => {
+  return `${BASE_API_URL}${ICONS_DIRECTORY}${relativePath}`;
+}; */

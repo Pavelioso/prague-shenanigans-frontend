@@ -20,16 +20,15 @@ const PragueMap: React.FC = () => {
   });
 
   useEffect(() => {
-    const fetchPOIs = async () => {
-      try {
-        const pois = await getPOIs();       // This now returns POI[] with mandatory fields
-        setPointsOfInterest(pois);          // No type error here
-      } catch (error) {
-        console.error(error);
-        Alert.alert("Error", "Failed to fetch POIs");
-      }
-    };
-    fetchPOIs();
+    getPOIs()
+      .then((pois) => {
+        console.log("Fetched POIs:", pois); // Log the fetched data
+        setPointsOfInterest(pois);         // Update the state with the fetched data
+      })
+      .catch((error) => {
+        console.error("Error fetching POIs:", error); // Log the error
+        Alert.alert("Error", "Failed to fetch POIs "); // Display an error alert
+      });
   }, []);
 
   const handleMarkerPress = (poi: POI) => {
